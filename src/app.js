@@ -16,5 +16,8 @@ app.use("/properties", propertyRouter);
 app.get("/", (req, res) => {
   res.send("Hello from Express App!");
 });
+app.get("/about", (req, res) => {
+  res.send("About Page from feature/about-api branch.");
+});
 
 export default app;
