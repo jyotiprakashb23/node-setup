@@ -8,8 +8,7 @@ export const verifyAdmin = async (req, res, next) => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       return res.status(401).json({ success: false, message: "Token Unavailable." });
-    }
-
+    }    
     // 2. Verify token signature
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "yourSecretKey");
 
@@ -23,14 +22,11 @@ export const verifyAdmin = async (req, res, next) => {
     if (!session) {
       return res.status(401).json({ success: false, message: "Session expired. Please log in again." });
     }
-
-    const parsedSession = JSON.parse(session);
-
-    // 4. Ensure token matches active session
-    // console.log("parsed token -" + parsedSession.token);
-    // console.log("provided token -" + token);
+    // console.log("Session from Redis: ", session);
     
-    if (parsedSession.token !== token) {
+    const parsedSession = JSON.parse(session);
+    
+    if (parsedSession.accessToken !== token) {
       return res.status(401).json({ success: false, message: "Invalid session token." });
     }
     

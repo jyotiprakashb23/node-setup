@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { createAdmin, getAllUsers,getAdmin } from "../controllers/adminController.js";
+import { createAdmin, getAllUsers,getAdmin, refreshAccessToken } from "../controllers/adminController.js";
 import { deleteAdmin } from "../controllers/adminController.js";
 import { adminLogin } from "../controllers/adminController.js";
 import { verifyAdmin } from "../middlewares/verifyAdmin.js";
@@ -17,5 +17,6 @@ adminRouter.post("/createadmin",verifyAdmin, createAdmin);
 adminRouter.delete("/deleteadmin/:id",verifyAdmin, deleteAdmin);
 adminRouter.post("/login", adminLogin);
 adminRouter.get("/getadmin/:id", getAdmin);
+adminRouter.post("/refreshtoken", refreshAccessToken);
 
 export default adminRouter;
