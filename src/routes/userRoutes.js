@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { addUser,getUser, updateUser, deleteUser, userLogin } from '../controllers/userController.js';
+import { addUser,getUser, updateUser, deleteUser, userLogin, userSignup } from '../controllers/userController.js';
 import {verifyAdmin} from '../middlewares/verifyAdmin.js';
 const userRouter = Router();
 
@@ -8,7 +8,7 @@ userRouter.get('/', (req, res) => {
         message: "Welcome to Users section.",});
 });  
 
-
+userRouter.post('/register', userSignup)
 userRouter.post('/login', userLogin);
 userRouter.get('/:id', getUser);
 userRouter.post('/add-user',verifyAdmin, addUser);
