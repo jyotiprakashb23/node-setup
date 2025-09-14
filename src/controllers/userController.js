@@ -3,6 +3,7 @@ import Admin from "../models/adminModel.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import client from "../config/redis.js";
+import { sendConfirmationEmail } from "../utils/mailer.js";
 
 export const addUser = async (req, res) => {
   const token = req.headers.authorization?.split(" ")[1];
@@ -44,8 +45,49 @@ export const addUser = async (req, res) => {
   }
 };
 
-export const userLogin = async (req, res) => {
+// USER SIGNUP
+export const userSignup = async (req, res) => {
     
+    const {name, email, password} = req.body;
+    try {
+        const existingUser = await User.findOne({ email });
+        // console.log(existingUser);
+        
+        if (existingUser) {
+            return res.status(400).json({
+                message: "User already exists",
+            });
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        // console.log("after hash");
+        
+        const user = new User({
+            name,
+            email,
+            password: hashedPassword
+        })
+        await user.save();
+
+        await sendConfirmationEmail(user.email,user.name);
+        res.status(201).json({
+            message: "User registered successfully!",
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email
+            }
+        });
+    } catch(error) {
+        res.status(500).json({
+            error: error.message,
+        });
+    }
+}
+
+// USER LOGIN
+export const userLogin = async (req, res) => {
+
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email }).populate("handledBy", "name email");
